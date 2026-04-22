@@ -1,6 +1,151 @@
 @Backend_HostAddress = http://localhost:5093
+@tenantId = padrao
+@token = 
 
-GET {{Backend_HostAddress}}/weatherforecast/
-Accept: application/json
+### ===== AUTENTICAÇÃO =====
+
+### Registrar novo usuário
+POST {{Backend_HostAddress}}/api/autenticacao/registrar
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "email": "joao@example.com",
+  "senha": "senha123",
+  "identificadorTenant": "{{tenantId}}"
+}
+
+###
+
+### Fazer login
+POST {{Backend_HostAddress}}/api/autenticacao/entrar
+Content-Type: application/json
+
+{
+  "email": "joao@example.com",
+  "senha": "senha123",
+  "identificadorTenant": "{{tenantId}}"
+}
+
+###
+
+### ===== REGISTROS DE ÁGUA =====
+
+### Listar todos os registros
+GET {{Backend_HostAddress}}/api/registros-agua?pagina=1&tamanho=10
+Authorization: Bearer {{token}}
+
+###
+
+### Obter um registro específico
+GET {{Backend_HostAddress}}/api/registros-agua/1
+Authorization: Bearer {{token}}
+
+###
+
+### Criar novo registro de água
+POST {{Backend_HostAddress}}/api/registros-agua
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "consumoLitros": 250.5,
+  "data": "2025-04-22T10:30:00Z",
+  "observacoes": "Consumo durante chuveiro"
+}
+
+###
+
+### Atualizar registro
+PUT {{Backend_HostAddress}}/api/registros-agua/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "consumoLitros": 300.0,
+  "observacoes": "Consumo atualizado"
+}
+
+###
+
+### Deletar registro
+DELETE {{Backend_HostAddress}}/api/registros-agua/1
+Authorization: Bearer {{token}}
+
+###
+
+### ===== NOTIFICAÇÕES =====
+
+### Listar notificações
+GET {{Backend_HostAddress}}/api/notificacoes?pagina=1&tamanho=10
+Authorization: Bearer {{token}}
+
+###
+
+### Obter notificação específica
+GET {{Backend_HostAddress}}/api/notificacoes/1
+Authorization: Bearer {{token}}
+
+###
+
+### Marcar notificação como lida
+POST {{Backend_HostAddress}}/api/notificacoes/1/marcar-como-lida
+Authorization: Bearer {{token}}
+
+###
+
+### Marcar todas as notificações como lidas
+POST {{Backend_HostAddress}}/api/notificacoes/marcar-todas-como-lidas
+Authorization: Bearer {{token}}
+
+###
+
+### Contar notificações não lidas
+GET {{Backend_HostAddress}}/api/notificacoes/nao-lidas/contar
+Authorization: Bearer {{token}}
+
+###
+
+### Deletar notificação
+DELETE {{Backend_HostAddress}}/api/notificacoes/1
+Authorization: Bearer {{token}}
+
+###
+
+### ===== DASHBOARD =====
+
+### Obter resumo completo do consumo
+GET {{Backend_HostAddress}}/api/dashboard/resumo
+Authorization: Bearer {{token}}
+
+###
+
+### Consumo diário (mês/ano específicos)
+GET {{Backend_HostAddress}}/api/dashboard/consumo-diario?mes=4&ano=2025
+Authorization: Bearer {{token}}
+
+###
+
+### Consumo diário (mês/ano atuais)
+GET {{Backend_HostAddress}}/api/dashboard/consumo-diario
+Authorization: Bearer {{token}}
+
+###
+
+### Consumo semanal (últimos 7 dias)
+GET {{Backend_HostAddress}}/api/dashboard/consumo-semanal
+Authorization: Bearer {{token}}
+
+###
+
+### Consumo mensal (últimos 12 meses)
+GET {{Backend_HostAddress}}/api/dashboard/consumo-mensal
+Authorization: Bearer {{token}}
+
+###
+
+### Estatísticas gerais
+GET {{Backend_HostAddress}}/api/dashboard/estatisticas
+Authorization: Bearer {{token}}
 
 ###

@@ -21,12 +21,12 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg("");
     try {
-      const data = await fetchApi("/auth/login", {
+      const data = await fetchApi("/autenticacao/entrar", {
         method: "POST",
-        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+        body: JSON.stringify({ email: loginEmail, senha: loginPassword, identificadorTenant: "padrao" }),
       });
       localStorage.setItem("token", data.token);
-      localStorage.setItem("userName", data.name);
+      localStorage.setItem("userName", data.nome);
       navigate("/dashboard");
     } catch (error: any) {
       setErrorMsg("Falha no login: " + error.message);
@@ -37,9 +37,9 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMsg("");
     try {
-      await fetchApi("/auth/register", {
+      await fetchApi("/autenticacao/registrar", {
         method: "POST",
-        body: JSON.stringify({ name: signupName, email: signupEmail, password: signupPassword }),
+        body: JSON.stringify({ nome: signupName, email: signupEmail, senha: signupPassword, identificadorTenant: "padrao" }),
       });
       // Optionally auto-login, or simply alert and switch to login tab
       alert("Cadastro realizado com sucesso! Faça login para continuar.");

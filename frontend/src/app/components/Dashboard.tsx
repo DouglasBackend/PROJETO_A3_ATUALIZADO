@@ -46,9 +46,40 @@ export default function Dashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const summary = await fetchApi("/dashboard/summary");
-        setData(summary);
-        const notifs = await fetchApi("/notifications");
+        const summary = await fetchApi("/dashboard/resumo");
+        const consumoSemanal = await fetchApi("/dashboard/consumo-semanal");
+        const consumoMensal = await fetchApi("/dashboard/consumo-mensal");
+        
+        const weeklyData = consumoSemanal.map((item: any) => ({
+           day: new Date(item.data).toLocaleDateString('pt-BR', { weekday: 'short' }),
+           consumption: item.consumoTotal,
+           average: summary.consumoMedio
+        }));
+
+        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        const monthlyData = consumoMensal.map((item: any) => ({
+           month: monthNames[item.mes - 1],
+           consumption: item.consumoTotal,
+           goal: 5000
+        }));
+
+        const todayRecords = summary.registrosRecentes.filter((r: any) => new Date(r.data).toDateString() === new Date().toDateString());
+        const dailyData = todayRecords.map((r: any) => ({
+           time: new Date(r.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+           consumption: r.consumoLitros
+        })).reverse();
+
+        setData({
+          currentConsumption: summary.consumoDiaAtual,
+          averageConsumption: summary.consumoMedio,
+          monthTotal: summary.consumoMesAtual,
+          savings: 0,
+          dailyData: dailyData.length > 0 ? dailyData : [{ time: "00:00", consumption: 0 }],
+          weeklyData,
+          monthlyData
+        });
+
+        const notifs = await fetchApi("/notificacoes");
         setNotifications(notifs);
       } catch (err) {
         console.error(err);
@@ -59,8 +90,17 @@ export default function Dashboard() {
 
   const markAsRead = async (id: number) => {
     try {
-      await fetchApi(`/notifications/read/${id}`, { method: "POST" });
-      setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
+      await fetchApi(`/notificacoes/${id}/marcar-como-lida`, { method: "POST" });
+      setNotifications(notifications.map(n => n.id === id ? { ...n, lida: true } : n));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await fetchApi(`/notificacoes/marcar-todas-como-lidas`, { method: "POST" });
+      setNotifications(notifications.map(n => ({ ...n, lida: true })));
     } catch (err) {
       console.error(err);
     }
@@ -72,7 +112,7 @@ export default function Dashboard() {
     navigate("/");
   };
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter(n => !n.lida).length;
 
   if (!data) {
     return <div className="min-h-screen flex items-center justify-center">Carregando dados do servidor...</div>;
@@ -107,27 +147,34 @@ export default function Dashboard() {
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                  <h4 className="font-semibold text-slate-800">Mensagens da Caixa</h4>
-                  <Badge variant="secondary" className="bg-cyan-100 text-cyan-800">{unreadCount} novas</Badge>
+                  <h4 className="font-semibold text-slate-800">Mensagens</h4>
+                  <div className="flex items-center gap-2">
+                    {unreadCount > 0 && (
+                      <Button variant="ghost" size="sm" onClick={markAllAsRead} className="h-6 text-[10px] px-2 text-cyan-700 hover:text-cyan-900 hover:bg-cyan-50">
+                        Ler todas
+                      </Button>
+                    )}
+                    <Badge variant="secondary" className="bg-cyan-100 text-cyan-800">{unreadCount} novas</Badge>
+                  </div>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {notifications.length === 0 ? (
                     <p className="p-4 text-sm text-slate-500 text-center">Nenhuma mensagem no momento.</p>
                   ) : (
                     notifications.map(n => (
-                      <div key={n.id} className={`p-4 border-b border-slate-50 last:border-0 ${!n.isRead ? 'bg-cyan-50/50' : 'bg-white'}`}>
+                      <div key={n.id} className={`p-4 border-b border-slate-50 last:border-0 ${!n.lida ? 'bg-cyan-50/50' : 'bg-white'}`}>
                         <div className="flex justify-between items-start mb-1">
-                          <h5 className={`text-sm ${!n.isRead ? 'font-semibold text-cyan-900' : 'font-medium text-slate-700'}`}>
-                            {n.title}
+                          <h5 className={`text-sm ${!n.lida ? 'font-semibold text-cyan-900' : 'font-medium text-slate-700'}`}>
+                            {n.titulo}
                           </h5>
-                          {!n.isRead && (
+                          {!n.lida && (
                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => markAsRead(n.id)}>
                               <Check className="w-4 h-4 text-emerald-500" />
                             </Button>
                           )}
                         </div>
-                        <p className="text-xs text-slate-600">{n.message}</p>
-                        <p className="text-[10px] text-slate-400 mt-2">{new Date(n.createdAt).toLocaleString()}</p>
+                        <p className="text-xs text-slate-600">{n.mensagem}</p>
+                        <p className="text-[10px] text-slate-400 mt-2">{new Date(n.dataCriacao).toLocaleString()}</p>
                       </div>
                     ))
                   )}

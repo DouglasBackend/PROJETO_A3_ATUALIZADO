@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { fetchApi } from "../../lib/api";
 import { Droplets, Calendar, Clock, Save, ArrowLeft, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -13,20 +14,54 @@ export default function DataEntry() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState(new Date().toTimeString().slice(0, 5));
   const [showSuccess, setShowSuccess] = useState(false);
+  const [lastReading, setLastReading] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchLastReading = async () => {
+      try {
+        const data = await fetchApi("/registros-agua?pagina=1&tamanho=1");
+        // Se houver uma última leitura, seta o valor. Se for null/undefined, permanece nulo.
+        if (data && data.length > 0 && data[0].consumoLitros !== undefined) {
+          setLastReading(data[0].consumoLitros);
+        } else {
+          setLastReading(null);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar última leitura:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLastReading();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mock salvar dados
-    setShowSuccess(true);
-    
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 2000);
+    try {
+      await fetchApi("/registros-agua", {
+        method: "POST",
+        body: JSON.stringify({ 
+          consumoLitros: parseInt(reading),
+          data: `${date}T${time}:00Z`
+        })
+      });
+
+      setShowSuccess(true);
+      
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+    } catch (err) {
+      console.error("Erro ao salvar leitura:", err);
+      alert("Falha ao salvar a leitura.");
+    }
   };
 
-  const lastReading = 234; // último valor registrado
-  const calculatedConsumption = reading ? parseInt(reading) - lastReading : 0;
+  const calculatedConsumption = (reading && lastReading !== null) 
+    ? parseInt(reading) - lastReading 
+    : (reading && lastReading === null ? parseInt(reading) : 0); // Se não tem leitura anterior, o consumo é o próprio valor inserido ou zero. (Conforme o usuário pediu, ele pode cadastrar inicial)
 
   return (
     <div className="min-h-screen">
@@ -85,11 +120,11 @@ export default function DataEntry() {
                       value={reading}
                       onChange={(e) => setReading(e.target.value)}
                       required
-                      min={lastReading}
+                      min={lastReading !== null ? lastReading : 0}
                     />
                   </div>
                   <p className="text-sm text-slate-500">
-                    Última leitura: <span className="font-semibold">{lastReading}L</span>
+                    Última leitura: <span className="font-semibold">{lastReading !== null ? `${lastReading}L` : "Nenhuma (Primeiro Registro)"}</span>
                   </p>
                 </div>
 
