@@ -1,0 +1,25 @@
+/* Paleta de cores para sistema de monitoramento de água */
+:root {
+  /* Tons de azul para água */
+  --water-primary: #0891B2; /* cyan-600 */
+  --water-primary-dark: #0E7490; /* cyan-700 */
+  --water-primary-light: #22D3EE; /* cyan-400 */
+  --water-background: #ECFEFF; /* cyan-50 */
+  --water-card: #CFFAFE; /* cyan-100 */
+  
+  /* Tons de verde para sustentabilidade */
+  --eco-green: #10B981; /* emerald-500 */
+  --eco-green-dark: #059669; /* emerald-600 */
+  --eco-green-light: #34D399; /* emerald-400 */
+  --eco-background: #D1FAE5; /* emerald-100 */
+  
+  /* Tons de alerta */
+  --alert-warning: #F59E0B; /* amber-500 */
+  --alert-danger: #EF4444; /* red-500 */
+  --alert-success: #10B981; /* emerald-500 */
+  
+  /* Neutros */
+  --water-gray: #64748B; /* slate-500 */
+  --water-gray-light: #F1F5F9; /* slate-100 */
+  --water-gray-dark: #334155; /* slate-700 */
+}
