@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router";
-import { 
-  Droplets, 
-  TrendingDown, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  Droplets,
+  TrendingDown,
+  TrendingUp,
+  AlertTriangle,
   Award,
   Calendar,
   Plus,
@@ -12,7 +12,8 @@ import {
   BookOpen,
   BarChart3,
   Bell,
-  Check
+  Check,
+  Receipt
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
@@ -40,6 +41,7 @@ export default function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState<"daily" | "weekly" | "monthly">("weekly");
   const [data, setData] = useState<any>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [estimativa, setEstimativa] = useState<any>(null);
   
   const userName = localStorage.getItem("userName") || "Usuário";
 
@@ -81,6 +83,9 @@ export default function Dashboard() {
 
         const notifs = await fetchApi("/notificacoes");
         setNotifications(notifs);
+
+        const estimativaData = await fetchApi("/dashboard/estimativa");
+        setEstimativa(estimativaData);
       } catch (err) {
         console.error(err);
       }
@@ -106,8 +111,10 @@ export default function Dashboard() {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+    try {
+      await fetchApi("/autenticacao/sair", { method: "POST" });
+    } catch {}
     localStorage.removeItem("userName");
     navigate("/");
   };
@@ -120,7 +127,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-white border-b border-cyan-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -133,7 +139,6 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex gap-4 items-center">
-            {/* Notificações / Caixa de Mensagem */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative group hover:bg-slate-100">
@@ -185,6 +190,15 @@ export default function Dashboard() {
             <Button
               variant="ghost"
               size="sm"
+              onClick={() => navigate("/contas-agua")}
+              className="text-purple-700 hover:bg-purple-50"
+            >
+              <Receipt className="w-4 h-4 mr-2" />
+              Contas
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => navigate("/tips")}
               className="text-emerald-700 hover:bg-emerald-50"
             >
@@ -205,7 +219,6 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {/* Alertas */}
         <Alert className="border-amber-500 bg-amber-50">
           <AlertTriangle className="w-5 h-5 text-amber-600" />
           <AlertDescription className="text-amber-800 ml-2">
@@ -214,7 +227,6 @@ export default function Dashboard() {
           </AlertDescription>
         </Alert>
 
-        {/* Cards de Resumo */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="border-cyan-200 bg-gradient-to-br from-cyan-50 to-white shadow-sm">
             <CardHeader className="pb-2">
@@ -264,21 +276,27 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-white shadow-sm">
+          <Card
+            className="border-purple-200 bg-gradient-to-br from-purple-50 to-white shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate("/contas-agua")}
+          >
             <CardHeader className="pb-2">
-              <CardDescription>Economia Estimada</CardDescription>
-              <CardTitle className="text-3xl text-purple-700">R$ 18,50</CardTitle>
+              <CardDescription>Estimativa do Mês</CardDescription>
+              <CardTitle className="text-3xl text-purple-700">
+                {estimativa && estimativa.precoMedioPorLitro > 0
+                  ? `R$ ${estimativa.estimativaMesAtual.toFixed(2)}`
+                  : "—"}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Award className="w-4 h-4 text-purple-500" />
-                <span>Neste mês</span>
+              <div className="flex items-center gap-2 text-sm text-purple-600">
+                <Receipt className="w-4 h-4" />
+                <span>Ver contas e projeções</span>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Botão de Registro Rápido */}
         <Card className="border-2 border-dashed border-cyan-300 bg-cyan-50/50 hover:bg-cyan-100/50 transition-colors shadow-sm cursor-pointer">
           <CardContent className="p-6" onClick={() => navigate("/data-entry")}>
             <div className="flex items-center justify-between">
@@ -299,7 +317,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Seletor de Período */}
         <div className="flex gap-2">
           <Button
             variant={selectedPeriod === "daily" ? "default" : "outline"}
@@ -324,9 +341,7 @@ export default function Dashboard() {
           </Button>
         </div>
 
-        {/* Gráficos */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Gráfico Principal */}
           <Card className="border-cyan-200 col-span-full shadow-sm">
             <CardHeader>
               <CardTitle className="text-slate-800">
@@ -414,7 +429,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card de Conquistas */}
           <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-emerald-800">
@@ -463,7 +477,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card de Comparação */}
           <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-white shadow-sm">
             <CardHeader>
               <CardTitle className="text-blue-800">Comparativo</CardTitle>

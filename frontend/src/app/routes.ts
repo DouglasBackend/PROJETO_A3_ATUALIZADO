@@ -4,6 +4,7 @@ import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
 import DataEntry from "./components/DataEntry";
 import EducationalTips from "./components/EducationalTips";
+import ContasAgua from "./components/ContasAgua";
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
       { path: "dashboard", Component: Dashboard },
       { path: "data-entry", Component: DataEntry },
       { path: "tips", Component: EducationalTips },
+      { path: "contas-agua", Component: ContasAgua },
     ],
   },
 ]);

@@ -21,7 +21,6 @@ export default function DataEntry() {
     const fetchLastReading = async () => {
       try {
         const data = await fetchApi("/registros-agua?pagina=1&tamanho=1");
-        // Se houver uma última leitura, seta o valor. Se for null/undefined, permanece nulo.
         if (data && data.length > 0 && data[0].consumoLitros !== undefined) {
           setLastReading(data[0].consumoLitros);
         } else {
@@ -61,11 +60,10 @@ export default function DataEntry() {
 
   const calculatedConsumption = (reading && lastReading !== null) 
     ? parseInt(reading) - lastReading 
-    : (reading && lastReading === null ? parseInt(reading) : 0); // Se não tem leitura anterior, o consumo é o próprio valor inserido ou zero. (Conforme o usuário pediu, ele pode cadastrar inicial)
+    : (reading && lastReading === null ? parseInt(reading) : 0);
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="bg-white border-b border-cyan-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button
@@ -100,7 +98,6 @@ export default function DataEntry() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Formulário */}
           <Card className="lg:col-span-2 border-cyan-200">
             <CardHeader>
               <CardTitle className="text-slate-800">Nova Leitura</CardTitle>
@@ -184,7 +181,6 @@ export default function DataEntry() {
             </CardContent>
           </Card>
 
-          {/* Informações e Histórico */}
           <div className="space-y-6">
             <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-white">
               <CardHeader>

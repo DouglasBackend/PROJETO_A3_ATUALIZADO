@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(Select-Object FullName)",
+      "PowerShell(tree \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\" -I \"bin|obj|node_modules|.git|.next|dist\" -L 3)",
+      "Bash(dotnet build *)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(npm run *)"
+    ]
+  }
+}

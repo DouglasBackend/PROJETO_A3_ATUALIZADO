@@ -2,9 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs;
 
-/// <summary>
-/// DTO para criação de notificação
-/// </summary>
 public class DtoCriarNotificacao
 {
     [Required]
@@ -22,9 +19,6 @@ public class DtoCriarNotificacao
     public string? Tipo { get; set; }
 }
 
-/// <summary>
-/// DTO para resposta de notificação
-/// </summary>
 public class DtoRespostaNotificacao
 {
     public int Id { get; set; }
@@ -36,9 +30,6 @@ public class DtoRespostaNotificacao
     public DateTime? DataLeitura { get; set; }
 }
 
-/// <summary>
-/// DTO para marcar notificação como lida
-/// </summary>
 public class DtoMarcarComoLido
 {
     public int IdNotificacao { get; set; }

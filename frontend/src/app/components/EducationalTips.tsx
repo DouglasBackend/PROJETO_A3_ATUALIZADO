@@ -108,7 +108,6 @@ export default function EducationalTips() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="bg-white border-b border-cyan-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button
@@ -133,7 +132,6 @@ export default function EducationalTips() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        {/* Banner Educativo */}
         <Card className="border-emerald-300 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -151,7 +149,6 @@ export default function EducationalTips() {
           </CardContent>
         </Card>
 
-        {/* Filtros de Categoria */}
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <Button
@@ -169,7 +166,6 @@ export default function EducationalTips() {
           ))}
         </div>
 
-        {/* Grid de Dicas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTips.map((tip) => {
             const IconComponent = tip.icon;
@@ -223,7 +219,6 @@ export default function EducationalTips() {
           })}
         </div>
 
-        {/* Card de Incentivo */}
         <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-white">
           <CardContent className="p-6">
             <div className="text-center space-y-3">

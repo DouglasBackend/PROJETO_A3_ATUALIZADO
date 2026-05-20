@@ -2,13 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs;
 
-/// <summary>
-/// DTO para criação de registro de água
-/// </summary>
 public class DtoCriarRegistroAqua
 {
-    [Required(ErrorMessage = "Consumo em litros é obrigatório")]
-    [Range(0.1, double.MaxValue, ErrorMessage = "Consumo deve ser maior que 0")]
+    [Required]
+    [Range(0.1, double.MaxValue)]
     public double ConsumoLitros { get; set; }
 
     public DateTime? Data { get; set; }
@@ -17,12 +14,9 @@ public class DtoCriarRegistroAqua
     public string? Observacoes { get; set; }
 }
 
-/// <summary>
-/// DTO para atualizar registro de água
-/// </summary>
 public class DtoAtualizarRegistroAqua
 {
-    [Range(0.1, double.MaxValue, ErrorMessage = "Consumo deve ser maior que 0")]
+    [Range(0.1, double.MaxValue)]
     public double? ConsumoLitros { get; set; }
 
     public DateTime? Data { get; set; }
@@ -31,9 +25,6 @@ public class DtoAtualizarRegistroAqua
     public string? Observacoes { get; set; }
 }
 
-/// <summary>
-/// DTO para resposta de registro de água
-/// </summary>
 public class DtoRespostaRegistroAqua
 {
     public int Id { get; set; }
@@ -44,9 +35,6 @@ public class DtoRespostaRegistroAqua
     public DateTime DataCriacao { get; set; }
 }
 
-/// <summary>
-/// DTO para resposta de resumo de registros
-/// </summary>
 public class DtoResumoCheio
 {
     public int TotalRegistros { get; set; }

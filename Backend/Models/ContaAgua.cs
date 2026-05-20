@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models;
 
-[Table("registros_agua")]
-public class RegistroAqua
+[Table("contas_agua")]
+public class ContaAgua
 {
     [Key]
     public int Id { get; set; }
@@ -14,14 +14,15 @@ public class RegistroAqua
     public int IdUsuario { get; set; }
 
     [Required]
-    [Range(0.1, double.MaxValue)]
-    public double ConsumoLitros { get; set; }
+    public DateTime MesReferencia { get; set; }
 
     [Required]
-    public DateTime Data { get; set; } = DateTime.UtcNow;
+    [Range(0.1, double.MaxValue)]
+    public double LitrosConsumidos { get; set; }
 
-    [StringLength(500)]
-    public string? Observacoes { get; set; }
+    [Required]
+    [Range(0.01, double.MaxValue)]
+    public double ValorPago { get; set; }
 
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 
