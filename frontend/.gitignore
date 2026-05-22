@@ -143,8 +143,7 @@ app.db-wal
 
 # =========== Geral / General ===========
 
-# Caches and Libs
-lib/
+
 cache/
 caches/
 
