@@ -6,7 +6,15 @@
       "PowerShell(tree \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\" -I \"bin|obj|node_modules|.git|.next|dist\" -L 3)",
       "Bash(dotnet build *)",
       "Bash(./node_modules/.bin/tsc --noEmit)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(dotnet add *)",
+      "Bash(dotnet remove *)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Remove-Item \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\\\\Backend\\\\Models\\\\WaterLog.cs\")",
+      "Bash(Remove-Item \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\\\\Backend\\\\Models\\\\User.cs\")",
+      "Bash(Remove-Item \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\\\\Backend\\\\Models\\\\Notification.cs\")",
+      "Bash(Remove-Item \"C:\\\\Users\\\\Lucas Cesar\\\\Desktop\\\\Faculdade\\\\Sistemas distribuidos e Mobile\\\\Trabalho A3\\\\Backend\\\\Models\\\\Tenant.cs\")",
+      "Bash(Write-Host \"Deletados com sucesso\")"
     ]
   }
 }

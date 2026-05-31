@@ -52,33 +52,33 @@ export default function Dashboard() {
         const consumoSemanal = await fetchApi("/dashboard/consumo-semanal");
         const consumoMensal = await fetchApi("/dashboard/consumo-mensal");
         
-        const weeklyData = consumoSemanal.map((item: any) => ({
-           day: new Date(item.data).toLocaleDateString('pt-BR', { weekday: 'short' }),
-           consumption: item.consumoTotal,
-           average: summary.consumoMedio
+        const dadosSemanais = consumoSemanal.map((item: any) => ({
+           dia: new Date(item.data).toLocaleDateString('pt-BR', { weekday: 'short' }),
+           consumo: item.consumoTotal,
+           media: summary.consumoMedio
         }));
 
-        const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        const monthlyData = consumoMensal.map((item: any) => ({
-           month: monthNames[item.mes - 1],
-           consumption: item.consumoTotal,
-           goal: 5000
+        const nomesMeses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+        const dadosMensais = consumoMensal.map((item: any) => ({
+           mes: nomesMeses[item.mes - 1],
+           consumo: item.consumoTotal,
+           meta: 5000
         }));
 
-        const todayRecords = summary.registrosRecentes.filter((r: any) => new Date(r.data).toDateString() === new Date().toDateString());
-        const dailyData = todayRecords.map((r: any) => ({
-           time: new Date(r.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-           consumption: r.consumoLitros
+        const registrosHoje = summary.registrosRecentes.filter((r: any) => new Date(r.data).toDateString() === new Date().toDateString());
+        const dadosDiarios = registrosHoje.map((r: any) => ({
+           hora: new Date(r.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+           consumo: r.consumoLitros
         })).reverse();
 
         setData({
-          currentConsumption: summary.consumoDiaAtual,
-          averageConsumption: summary.consumoMedio,
-          monthTotal: summary.consumoMesAtual,
-          savings: 0,
-          dailyData: dailyData.length > 0 ? dailyData : [{ time: "00:00", consumption: 0 }],
-          weeklyData,
-          monthlyData
+          consumoAtual: summary.consumoDiaAtual,
+          consumoMedio: summary.consumoMedio,
+          totalMes: summary.consumoMesAtual,
+          economia: 0,
+          dadosDiarios: dadosDiarios.length > 0 ? dadosDiarios : [{ hora: "00:00", consumo: 0 }],
+          dadosSemanais,
+          dadosMensais
         });
 
         const notifs = await fetchApi("/notificacoes");
@@ -231,11 +231,11 @@ export default function Dashboard() {
           <Card className="border-cyan-200 bg-gradient-to-br from-cyan-50 to-white shadow-sm">
             <CardHeader className="pb-2">
               <CardDescription>Consumo Hoje</CardDescription>
-              <CardTitle className="text-3xl text-cyan-700">{data.currentConsumption}L</CardTitle>
+              <CardTitle className="text-3xl text-cyan-700">{data.consumoAtual}L</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 text-sm">
-                {data.currentConsumption > data.averageConsumption ? (
+                {data.consumoAtual > data.consumoMedio ? (
                   <>
                     <TrendingUp className="w-4 h-4 text-red-500" />
                     <span className="text-red-600">+6% acima da média</span>
@@ -253,7 +253,7 @@ export default function Dashboard() {
           <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-white shadow-sm">
             <CardHeader className="pb-2">
               <CardDescription>Média Diária</CardDescription>
-              <CardTitle className="text-3xl text-blue-700">{data.averageConsumption}L</CardTitle>
+              <CardTitle className="text-3xl text-blue-700">{data.consumoMedio}L</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -266,12 +266,12 @@ export default function Dashboard() {
           <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-sm">
             <CardHeader className="pb-2">
               <CardDescription>Total do Mês</CardDescription>
-              <CardTitle className="text-3xl text-emerald-700">{data.monthTotal}L</CardTitle>
+              <CardTitle className="text-3xl text-emerald-700">{data.totalMes}L</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2 text-sm">
                 <TrendingDown className="w-4 h-4 text-emerald-500" />
-                <span className="text-emerald-600">{data.savings}% abaixo da meta</span>
+                <span className="text-emerald-600">{data.economia}% abaixo da meta</span>
               </div>
             </CardContent>
           </Card>
@@ -358,66 +358,66 @@ export default function Dashboard() {
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 {selectedPeriod === "daily" && (
-                  <AreaChart data={data.dailyData}>
+                  <AreaChart data={data.dadosDiarios}>
                     <defs>
-                      <linearGradient id="colorConsumption" x1="0" y1="0" x2="0" y2="1">
+                      <linearGradient id="colorConsumo" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#0891B2" stopOpacity={0.8}/>
                         <stop offset="95%" stopColor="#0891B2" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="time" stroke="#64748b" />
+                    <XAxis dataKey="hora" stroke="#64748b" />
                     <YAxis stroke="#64748b" label={{ value: 'Litros', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ background: '#fff', border: '1px solid #0891B2', borderRadius: '8px' }}
                       formatter={(value: any) => [`${value}L`, 'Consumo']}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="consumption" 
-                      stroke="#0891B2" 
+                    <Area
+                      type="monotone"
+                      dataKey="consumo"
+                      stroke="#0891B2"
                       strokeWidth={2}
-                      fillOpacity={1} 
-                      fill="url(#colorConsumption)" 
+                      fillOpacity={1}
+                      fill="url(#colorConsumo)"
                     />
                   </AreaChart>
                 )}
                 {selectedPeriod === "weekly" && (
-                  <BarChart data={data.weeklyData}>
+                  <BarChart data={data.dadosSemanais}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="day" stroke="#64748b" />
+                    <XAxis dataKey="dia" stroke="#64748b" />
                     <YAxis stroke="#64748b" label={{ value: 'Litros', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ background: '#fff', border: '1px solid #0891B2', borderRadius: '8px' }}
                       formatter={(value: any) => [`${value}L`]}
                     />
                     <Legend />
-                    <Bar dataKey="consumption" fill="#0891B2" name="Consumo" radius={[8, 8, 0, 0]} />
-                    <Bar dataKey="average" fill="#10B981" name="Média" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="consumo" fill="#0891B2" name="Consumo" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="media" fill="#10B981" name="Média" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 )}
                 {selectedPeriod === "monthly" && (
-                  <LineChart data={data.monthlyData}>
+                  <LineChart data={data.dadosMensais}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="month" stroke="#64748b" />
+                    <XAxis dataKey="mes" stroke="#64748b" />
                     <YAxis stroke="#64748b" label={{ value: 'Litros', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ background: '#fff', border: '1px solid #0891B2', borderRadius: '8px' }}
                       formatter={(value: any) => [`${value}L`]}
                     />
                     <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="consumption" 
-                      stroke="#0891B2" 
+                    <Line
+                      type="monotone"
+                      dataKey="consumo"
+                      stroke="#0891B2"
                       strokeWidth={3}
                       name="Consumo"
                       dot={{ fill: '#0891B2', r: 6 }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="goal" 
-                      stroke="#10B981" 
+                    <Line
+                      type="monotone"
+                      dataKey="meta"
+                      stroke="#10B981"
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       name="Meta"
@@ -486,7 +486,7 @@ export default function Dashboard() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">Você (3 pessoas)</span>
-                  <span className="font-semibold text-cyan-700">{data.averageConsumption}L/dia</span>
+                  <span className="font-semibold text-cyan-700">{data.consumoMedio}L/dia</span>
                 </div>
                 <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400" style={{ width: '68%' }}></div>
